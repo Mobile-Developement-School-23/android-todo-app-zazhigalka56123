@@ -13,12 +13,11 @@ import i.need.drugs.todoapp.R
 import i.need.drugs.todoapp.databinding.ItemTodoBinding
 import i.need.drugs.todoapp.domain.TodoItem
 import i.need.drugs.todoapp.presentation.MainFragment
-import java.util.Calendar
+import java.util.*
 
 class TodoListAdapter : ListAdapter<TodoItem, TodoItemViewHolder>(TodoItemDiffCallback()) {
 
     var onTodoItemClickListener: ((TodoItem) -> Unit)? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoItemViewHolder {
         val binding =
             ItemTodoBinding.inflate(
@@ -26,7 +25,6 @@ class TodoListAdapter : ListAdapter<TodoItem, TodoItemViewHolder>(TodoItemDiffCa
                 parent,
                 false
             )
-
         return TodoItemViewHolder(binding)
     }
 
@@ -34,9 +32,9 @@ class TodoListAdapter : ListAdapter<TodoItem, TodoItemViewHolder>(TodoItemDiffCa
         val item = getItem(position)
 
         with(viewHolder.binding) {
-            tvMsg.text = item.msg
+            tvMsg.text = item.msg  // Текст туду
 
-            when (item.priority) {
+            when (item.priority) { // Текст приоритета
                 TodoItem.ItemPriority.LOW -> {
                     ivPriority.setImageResource(R.drawable.ic_low_priority)
                     ivPriority.visibility = View.VISIBLE
@@ -61,7 +59,7 @@ class TodoListAdapter : ListAdapter<TodoItem, TodoItemViewHolder>(TodoItemDiffCa
                 }
             }
 
-            if (item.deadline != null){
+            if (item.deadline != null){ // Дата дедлайна
                 val calendar = Calendar.getInstance()
                 calendar.time = item.deadline!!
                 val day = calendar.get(Calendar.DAY_OF_MONTH)
@@ -75,22 +73,22 @@ class TodoListAdapter : ListAdapter<TodoItem, TodoItemViewHolder>(TodoItemDiffCa
             }
 
 
-            if (item.isCompleted){
+            if (item.isCompleted){ // Состояние чекбокса
                setTodoCompeted(checkboxDone, tvMsg, root.resources)
 
             }else{
                 setTodoNotCompleted(checkboxDone, item, tvMsg, root.resources)
             }
 
-            container.setOnClickListener {
+            container.setOnClickListener {  // Клик по итему
                 onTodoItemClickListener?.invoke(item)
             }
 
-            checkboxDone.setOnClickListener {
+            checkboxDone.setOnClickListener { // Состояние чекбокса
                 checkboxDone.isErrorShown = false
                 if (checkboxDone.checkedState == MaterialCheckBox.STATE_CHECKED) {
                     setTodoCompeted(checkboxDone, tvMsg, root.resources)
-                    MainFragment.countDone.value = MainFragment.countDone.value?.plus(1)
+                    MainFragment.countDone.value = MainFragment.countDone.value?.plus(1) // Потом переделаю на вьюМодель
                 }else{
                     MainFragment.countDone.value = MainFragment.countDone.value?.minus(1)
                     setTodoNotCompleted(checkboxDone, item, tvMsg, root.resources)

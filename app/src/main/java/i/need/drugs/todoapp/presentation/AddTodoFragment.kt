@@ -21,10 +21,9 @@ class AddTodoFragment : Fragment() {
 
     private lateinit var binding: FragmentTodoBinding
     private lateinit var viewModel : MainViewModel
-
+    private lateinit var todoItem : TodoItem
 
     private var priorityMenu: PopupMenu? = null
-    private lateinit var todoItem : TodoItem
     private val c = Calendar.getInstance()
 
     override fun onCreateView(
@@ -145,6 +144,7 @@ class AddTodoFragment : Fragment() {
 
         priorityMenu!!.menuInflater.inflate(R.menu.menu_priority, priorityMenu!!.menu)
 
+        // Хардкодить плохо, но я разбойник
         priorityMenu!!.setOnMenuItemClickListener { item ->
             when(item.itemId){
                 R.id.low -> {
