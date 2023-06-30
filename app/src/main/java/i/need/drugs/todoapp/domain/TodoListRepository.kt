@@ -6,13 +6,12 @@ interface TodoListRepository {
 
     fun getTodoList(): LiveData<List<TodoItem>>
 
-    fun getTodoItem(id: String): TodoItem
+    suspend fun getTodoItem(id: String): TodoItem
 
-    fun editTodoItem(item: TodoItem)
+    suspend fun editTodoItem(item: TodoItem)
 
-    fun addTodoItem(item: TodoItem)
+    suspend fun addTodoItem(item: TodoItem)
 
-    fun deleteTodoItem(item: TodoItem)
-
+    suspend fun deleteTodoItem(id: String)
 
 }

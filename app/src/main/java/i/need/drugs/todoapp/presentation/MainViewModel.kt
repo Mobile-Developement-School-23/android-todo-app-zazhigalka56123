@@ -1,12 +1,15 @@
 package i.need.drugs.todoapp.presentation
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
-import i.need.drugs.todoapp.data.TodoListRepositoryImpl
+import i.need.drugs.todoapp.data.db.TodoListRepositoryImpl
 import i.need.drugs.todoapp.domain.*
+import i.need.drugs.todoapp.domain.useCases.*
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = TodoListRepositoryImpl
+    private val repository = TodoListRepositoryImpl(application)
 
     private val getTodoListUseCase = GetTodoListUseCase(repository)
     private val getTodoItemUseCase = GetTodoItemUseCase(repository)
@@ -17,25 +20,25 @@ class MainViewModel : ViewModel() {
     val todoList = getTodoListUseCase.getTodoList()
 
 
-    fun getTodoItem(id: String) : TodoItem {
+    suspend fun getTodoItem(id: String) : TodoItem {
         return getTodoItemUseCase.getTodoItem(id)
     }
 
-    fun editTodoItem(item: TodoItem) {
+    suspend fun editTodoItem(item: TodoItem) {
         editTodoItemUseCase.editTodoItem(item)
     }
 
-    fun addTodoItem(item: TodoItem) {
+    suspend fun addTodoItem(item: TodoItem) {
         addTodoItemUseCase.addTodoItem(item)
     }
 
-    fun changeDoneState(item: TodoItem){
+    suspend fun changeDoneState(item: TodoItem){
         val newItem = item.copy(isCompleted = ! item.isCompleted)
         editTodoItemUseCase.editTodoItem(newItem)
     }
 
-    fun deleteTodoItem(todoItem: TodoItem){
-        deleteTodoItemUseCase.deleteTodoItem(todoItem)
+    suspend fun deleteTodoItem(id: String){
+        deleteTodoItemUseCase.deleteTodoItem(id)
     }
 
 

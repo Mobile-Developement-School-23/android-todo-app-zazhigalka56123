@@ -1,7 +1,5 @@
 package i.need.drugs.todoapp.domain
 
-import android.os.Parcel
-import android.os.Parcelable
 import java.util.*
 
 data class TodoItem(
