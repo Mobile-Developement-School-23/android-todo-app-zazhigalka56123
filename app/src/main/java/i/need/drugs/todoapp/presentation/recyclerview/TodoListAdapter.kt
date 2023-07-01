@@ -11,13 +11,14 @@ import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textview.MaterialTextView
 import i.need.drugs.todoapp.R
 import i.need.drugs.todoapp.databinding.ItemTodoBinding
-import i.need.drugs.todoapp.domain.TodoItem
+import i.need.drugs.todoapp.domain.db.TodoItem
 import i.need.drugs.todoapp.presentation.MainFragment
 import java.util.*
 
 class TodoListAdapter : ListAdapter<TodoItem, TodoItemViewHolder>(TodoItemDiffCallback()) {
 
     var onTodoItemClickListener: ((TodoItem) -> Unit)? = null
+    var onTodoItemEditedListener: ((TodoItem) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoItemViewHolder {
         val binding =
             ItemTodoBinding.inflate(
@@ -93,6 +94,7 @@ class TodoListAdapter : ListAdapter<TodoItem, TodoItemViewHolder>(TodoItemDiffCa
                     MainFragment.countDone.value = MainFragment.countDone.value?.minus(1)
                     setTodoNotCompleted(checkboxDone, item, tvMsg, root.resources)
                 }
+                onTodoItemEditedListener?.invoke(item)
             }
         }
     }
@@ -107,6 +109,7 @@ class TodoListAdapter : ListAdapter<TodoItem, TodoItemViewHolder>(TodoItemDiffCa
         box.isErrorShown = false
 
         tv.paintFlags =  Paint.STRIKE_THRU_TEXT_FLAG
+
     }
 
     private fun setTodoNotCompleted(box: MaterialCheckBox, item: TodoItem, tv: MaterialTextView, resources: Resources){

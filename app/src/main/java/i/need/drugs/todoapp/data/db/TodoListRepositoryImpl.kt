@@ -3,10 +3,8 @@ package i.need.drugs.todoapp.data.db
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import i.need.drugs.todoapp.domain.TodoItem
-import i.need.drugs.todoapp.domain.TodoListRepository
-import java.util.Calendar
+import i.need.drugs.todoapp.domain.db.TodoItem
+import i.need.drugs.todoapp.domain.db.TodoListRepository
 
 class TodoListRepositoryImpl(application: Application) : TodoListRepository {
 

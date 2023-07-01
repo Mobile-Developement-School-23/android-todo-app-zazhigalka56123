@@ -1,4 +1,4 @@
-package i.need.drugs.todoapp.domain
+package i.need.drugs.todoapp.domain.db
 
 import java.util.*
 

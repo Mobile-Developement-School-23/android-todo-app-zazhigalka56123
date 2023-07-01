@@ -2,6 +2,7 @@ package i.need.drugs.todoapp.presentation
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,13 +10,16 @@ import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 import i.need.drugs.todoapp.R
+import i.need.drugs.todoapp.data.api.ApiRepositoryImpl
 import i.need.drugs.todoapp.databinding.FragmentTodoBinding
-import i.need.drugs.todoapp.domain.TodoItem
+import i.need.drugs.todoapp.domain.db.TodoItem
+import kotlinx.coroutines.launch
 import java.util.*
 
 class EditTodoFragment : Fragment() {
@@ -37,13 +41,16 @@ class EditTodoFragment : Fragment() {
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
 
         binding = FragmentTodoBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity()) [MainViewModel::class.java]
+        viewModel = ViewModelProvider(this) [MainViewModel::class.java]
 
-        todoItem = viewModel.getTodoItem(todoId)
+        viewModel.getTodoItem(todoId)
+        viewModel.todoItem.observeForever {
+            todoItem = it
+            init()
+            setupMenu()
+            setupListeners()
+        }
 
-        init()
-        setupMenu()
-        setupListeners()
 
         return binding.root
     }
@@ -55,15 +62,15 @@ class EditTodoFragment : Fragment() {
 
             when(todoItem.priority){
                 TodoItem.ItemPriority.LOW -> {
-                    binding.tvPriority.setTextColor(requireActivity().getColor(R.color.label_tertiary))
+                    binding.tvPriority.setTextColor(requireContext().getColor(R.color.label_tertiary))
                     binding.tvPriority.text = "Низкий"
                 }
                 TodoItem.ItemPriority.URGENT -> {
-                    binding.tvPriority.setTextColor(requireActivity().getColor(R.color.red))
+                    binding.tvPriority.setTextColor(requireContext().getColor(R.color.red))
                     binding.tvPriority.text = "!! Высокий"
                 }
                 else -> {
-                    binding.tvPriority.setTextColor(requireActivity().getColor(R.color.label_tertiary))
+                    binding.tvPriority.setTextColor(requireContext().getColor(R.color.label_tertiary))
                     binding.tvPriority.text = "Нет"
                 }
             }
@@ -117,7 +124,7 @@ class EditTodoFragment : Fragment() {
 
                 if (todoItem.msg.isNotBlank()) {
                     todoItem.changedDate = Calendar.getInstance().time
-                    viewModel.editTodoItem(todoItem)
+                    viewModel.editTodoItem(requireContext().getRevision(), UUID.fromString(todoItem.id), todoItem)
                     findNavController().popBackStack()
                 } else {
                     val decorView = requireActivity().window.decorView
@@ -132,7 +139,7 @@ class EditTodoFragment : Fragment() {
 
 
             llDelete.setOnClickListener {
-                viewModel.deleteTodoItem(todoItem)
+                viewModel.deleteTodoItem(requireContext().getRevision(), todoItem.id)
                 findNavController().popBackStack()
             }
 
@@ -206,5 +213,11 @@ class EditTodoFragment : Fragment() {
 
         binding.tvDeadline.text = getString(R.string.date, day, month, year)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+
 
 }

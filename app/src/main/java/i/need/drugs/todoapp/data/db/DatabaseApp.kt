@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [TodoItemDbModel::class],
     version = 1,
-    exportSchema = true,
+    exportSchema = false,
 )
 abstract class DatabaseApp : RoomDatabase() {
 
@@ -17,7 +17,7 @@ abstract class DatabaseApp : RoomDatabase() {
     companion object {
         private var INSTANCE: DatabaseApp? = null
         private val LOCK = Any()
-        private const val DB_NAME = "todo_item_db"
+        private const val DB_NAME = "todo_item.db"
 
         fun getInstance(application: Application): DatabaseApp {
             INSTANCE?.let {

@@ -19,6 +19,8 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             app:checkedState="unchecked"
+            android:clickable="false"
+            android:focusable="false"
             android:theme="@style/ThemeOverlay.App.CheckBox"
             app:layout_constraintBottom_toBottomOf="@+id/ll_msg"
             app:layout_constraintStart_toStartOf="parent"

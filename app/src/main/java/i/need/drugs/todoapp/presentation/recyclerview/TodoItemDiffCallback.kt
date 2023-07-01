@@ -1,7 +1,7 @@
 package i.need.drugs.todoapp.presentation.recyclerview
 
 import androidx.recyclerview.widget.DiffUtil
-import i.need.drugs.todoapp.domain.TodoItem
+import i.need.drugs.todoapp.domain.db.TodoItem
 
 class TodoItemDiffCallback : DiffUtil.ItemCallback<TodoItem>() {
 

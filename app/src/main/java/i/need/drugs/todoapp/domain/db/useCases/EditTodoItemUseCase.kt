@@ -1,7 +1,7 @@
-package i.need.drugs.todoapp.domain.useCases
+package i.need.drugs.todoapp.domain.db.useCases
 
-import i.need.drugs.todoapp.domain.TodoItem
-import i.need.drugs.todoapp.domain.TodoListRepository
+import i.need.drugs.todoapp.domain.db.TodoItem
+import i.need.drugs.todoapp.domain.db.TodoListRepository
 
 class EditTodoItemUseCase(private val todoListRepository: TodoListRepository) {
 

@@ -1,6 +1,6 @@
 package i.need.drugs.todoapp.data.db
 
-import i.need.drugs.todoapp.domain.TodoItem
+import i.need.drugs.todoapp.domain.db.TodoItem
 import java.util.Date
 
 class DatabaseMapper {

@@ -14,7 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 import i.need.drugs.todoapp.R
 import i.need.drugs.todoapp.databinding.FragmentTodoBinding
-import i.need.drugs.todoapp.domain.TodoItem
+import i.need.drugs.todoapp.domain.db.TodoItem
 import java.util.*
 
 class AddTodoFragment : Fragment() {
@@ -48,7 +48,7 @@ class AddTodoFragment : Fragment() {
         with(binding){
 
             todoItem = TodoItem(
-                id = c.timeInMillis.toString(),
+                id = UUID.randomUUID().toString(),
                 msg = "",
                 priority = TodoItem.ItemPriority.NORMAL,
                 deadline = null,
@@ -101,7 +101,7 @@ class AddTodoFragment : Fragment() {
                 todoItem.msg = tvMsg.text.toString()
 
                 if (todoItem.msg.isNotBlank()) {
-                    viewModel.addTodoItem(todoItem)
+                    viewModel.addTodoItem(requireContext().getRevision(), todoItem)
                     findNavController().popBackStack()
                 } else {
                     val decorView = requireActivity().window.decorView

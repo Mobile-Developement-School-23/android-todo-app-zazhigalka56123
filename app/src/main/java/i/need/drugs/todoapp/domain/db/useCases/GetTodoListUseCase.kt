@@ -1,8 +1,8 @@
-package i.need.drugs.todoapp.domain.useCases
+package i.need.drugs.todoapp.domain.db.useCases
 
 import androidx.lifecycle.LiveData
-import i.need.drugs.todoapp.domain.TodoItem
-import i.need.drugs.todoapp.domain.TodoListRepository
+import i.need.drugs.todoapp.domain.db.TodoItem
+import i.need.drugs.todoapp.domain.db.TodoListRepository
 
 class GetTodoListUseCase(private val todoListRepository: TodoListRepository) {
 

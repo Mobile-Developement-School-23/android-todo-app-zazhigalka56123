@@ -36,7 +36,7 @@ class MainFragment : Fragment() {
 
         binding = FragmentMainBinding.inflate(inflater, container, false)
 
-        viewModel = ViewModelProvider(requireActivity()) [MainViewModel::class.java]
+        viewModel = ViewModelProvider(this) [MainViewModel::class.java]
 
         viewModel.todoList.observe(viewLifecycleOwner) { it ->
             var count = 0
@@ -48,6 +48,15 @@ class MainFragment : Fragment() {
 
             countDone.value = count
             todoListAdapter.submitList(it)
+        }
+
+        viewModel.downloadTodoList()
+
+        if (requireContext().getNeedUpdate()){
+            requireContext().setNeedUpdate(false)
+            viewModel.todoList.value?.let {
+                viewModel.updateTodoList(requireContext().getRevision(), it)
+            }
         }
 
         countDone.observe(viewLifecycleOwner) {
@@ -79,11 +88,11 @@ class MainFragment : Fragment() {
 
             setListener(object :  SwipeLeftRightCallback.Listener {
                 override fun onSwipedRight(position: Int) {
-                    viewModel.changeDoneState(todoListAdapter.currentList[position])
+                    viewModel.changeDoneState(requireContext().getRevision(), todoListAdapter.currentList[position])
                 }
 
                 override fun onSwipedLeft(position: Int) {
-                    viewModel.deleteTodoItem(todoListAdapter.currentList[position])
+                    viewModel.deleteTodoItem(requireContext().getRevision(), todoListAdapter.currentList[position].id)
                 }
             })
 
@@ -91,6 +100,10 @@ class MainFragment : Fragment() {
 
         todoListAdapter.onTodoItemClickListener = {
             findNavController().navigate(MainFragmentDirections.actionEditTodo(it.id))
+        }
+
+        todoListAdapter.onTodoItemEditedListener = {
+            viewModel.changeDoneState(requireContext().getRevision(), it)
         }
     }
 }
