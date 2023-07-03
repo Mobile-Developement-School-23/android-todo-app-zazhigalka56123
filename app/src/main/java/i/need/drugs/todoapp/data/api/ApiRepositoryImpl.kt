@@ -3,10 +3,8 @@ package i.need.drugs.todoapp.data.api
 import android.content.Context
 import android.util.Log
 import i.need.drugs.todoapp.domain.api.ApiRepository
-import i.need.drugs.todoapp.domain.api.model.TodoItemResponseDto
 import i.need.drugs.todoapp.domain.db.TodoItem
 import i.need.drugs.todoapp.presentation.setRevision
-import retrofit2.Response
 import java.util.*
 
 class ApiRepositoryImpl(private val context: Context) : ApiRepository{
@@ -114,6 +112,8 @@ class ApiRepositoryImpl(private val context: Context) : ApiRepository{
     override suspend fun deleteTodoItem(revision: Int, id: UUID): TodoItem? {
         return try {
             val response = service.deleteTodoItem(revision, id).body()
+            Log.d("deleteTodoItem", service.deleteTodoItem(revision, id).raw().toString())
+
             if (response != null) {
                 if (response.status == "ok") {
                     context.setRevision(response.revision)
@@ -125,6 +125,7 @@ class ApiRepositoryImpl(private val context: Context) : ApiRepository{
                 null
             }
         }catch (e: Exception) {
+            Log.d("deleteTodoItem-error", e.message.toString())
             null
         }
     }

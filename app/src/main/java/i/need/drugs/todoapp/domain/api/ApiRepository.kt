@@ -1,8 +1,6 @@
 package i.need.drugs.todoapp.domain.api
 
-import i.need.drugs.todoapp.domain.api.model.TodoItemResponseDto
 import i.need.drugs.todoapp.domain.db.TodoItem
-import retrofit2.Response
 import java.util.*
 
 interface ApiRepository {

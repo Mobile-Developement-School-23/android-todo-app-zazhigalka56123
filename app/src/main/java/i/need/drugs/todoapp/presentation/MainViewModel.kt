@@ -8,6 +8,7 @@ import i.need.drugs.todoapp.data.db.TodoListRepositoryImpl
 import i.need.drugs.todoapp.domain.api.useCases.*
 import i.need.drugs.todoapp.domain.db.TodoItem
 import i.need.drugs.todoapp.domain.db.useCases.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -34,7 +35,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var msgSnackbar = MutableLiveData<String>(null)
 
     fun downloadTodoList(){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val request = apiDownloadTodoListUseCase.downloadTodoList()
             Log.d("downloadTodoList", request.toString())
             if(request == null) {
@@ -48,7 +49,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun updateTodoList(revision: Int, list: List<TodoItem>){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val request = apiUpdateTodoListUseCase.updateTodoList(revision, list)
             Log.d("updateTodoList", request.toString())
             if(request == null) {
@@ -62,14 +63,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun getTodoItem(id: String)  {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             todoItem.postValue(getTodoItemUseCase.getTodoItem(id))
         }
 
     }
 
     fun editTodoItem(revision: Int, id: UUID, item: TodoItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val request = apiEditTodoItemUseCase.editTodoItem(revision, id, item)
             Log.d("editTodoItem", request.toString())
             if (request == null){
@@ -80,7 +81,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun addTodoItem(revision: Int, item: TodoItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val request = apiLoadTodoItemUseCase.loadTodoItem(revision, item)
             Log.d("addTodoItem", request.toString())
             if (request == null){
@@ -91,7 +92,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun changeDoneState(revision: Int, item: TodoItem){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val newItem = item.copy(isCompleted = ! item.isCompleted)
             val request = apiEditTodoItemUseCase.editTodoItem(revision, UUID.fromString(item.id), newItem)
             Log.d("changeDoneState", request.toString())
@@ -104,8 +105,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun deleteTodoItem(revision: Int, id: String){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val request = apiDeleteTodoItemUseCase.deleteTodoItem(revision, UUID.fromString(id))
+            Log.d("deleteTodoItem", request.toString())
             if (request == null){
                 msgSnackbar.postValue("Не удалось синхронизировать данные с сервером")
             }
