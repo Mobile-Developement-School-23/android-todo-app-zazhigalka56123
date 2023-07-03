@@ -124,7 +124,7 @@ class EditTodoFragment : Fragment() {
 
                 if (todoItem.msg.isNotBlank()) {
                     todoItem.changedDate = Calendar.getInstance().time
-                    viewModel.editTodoItem(requireContext().getRevision(), UUID.fromString(todoItem.id), todoItem)
+                    viewModel.editTodoItem(requireActivity(), requireContext().getRevision(), UUID.fromString(todoItem.id), todoItem)
                     findNavController().popBackStack()
                 } else {
                     val decorView = requireActivity().window.decorView
@@ -139,7 +139,7 @@ class EditTodoFragment : Fragment() {
 
 
             llDelete.setOnClickListener {
-                viewModel.deleteTodoItem(requireContext().getRevision(), todoItem.id)
+                viewModel.deleteTodoItem(requireActivity(), requireContext().getRevision(), todoItem.id)
                 findNavController().popBackStack()
             }
 

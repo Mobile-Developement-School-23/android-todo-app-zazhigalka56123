@@ -101,7 +101,7 @@ class AddTodoFragment : Fragment() {
                 todoItem.msg = tvMsg.text.toString()
 
                 if (todoItem.msg.isNotBlank()) {
-                    viewModel.addTodoItem(requireContext().getRevision(), todoItem)
+                    viewModel.addTodoItem(requireActivity(), requireContext().getRevision(), todoItem)
                     findNavController().popBackStack()
                 } else {
                     val decorView = requireActivity().window.decorView

@@ -15,6 +15,7 @@ class ApiRepositoryImpl(private val context: Context) : ApiRepository{
         try {
             val response = service.downloadTodoList().body()
             if (response != null) {
+                Log.d("-response", "${response.revision} ${response.status}")
                 return if (response.status == "ok") {
                     context.setRevision(response.revision)
                     mapper.mapListDtoToListEntity(response.list)
@@ -29,7 +30,11 @@ class ApiRepositoryImpl(private val context: Context) : ApiRepository{
     }
     override suspend fun updateTodoList(revision: Int, body: List<TodoItem>): List<TodoItem>? {
         try {
-            val response = service.updateTodoList(revision, mapper.mapListEntityToListRequestDto(body)).body()
+            val raw = service.updateTodoList(revision, mapper.mapListEntityToListRequestDto(body))
+            Log.d("updateTodoListraw", raw.toString())
+            Log.d("updateTodoListrev1", revision.toString())
+            Log.d("updateTodoListrev2", raw.body()?.revision.toString())
+            val response = raw.body()
 
             return if (response != null){
                 if (response.status == "ok") {
@@ -43,6 +48,7 @@ class ApiRepositoryImpl(private val context: Context) : ApiRepository{
             }
 
         }catch (e: Exception){
+            Log.d("update_err", e.message.toString())
             return null
         }
     }
@@ -68,7 +74,11 @@ class ApiRepositoryImpl(private val context: Context) : ApiRepository{
 
     override suspend fun loadTodoItem(revision: Int, body: TodoItem): TodoItem? {
         return try {
-            val response = service.loadTodoItem(revision, mapper.mapEntityToItemRequestDto(body)).body()
+            val raw = service.loadTodoItem(revision, mapper.mapEntityToItemRequestDto(body))
+            Log.d("addTodoItem", raw.raw().toString())
+            Log.d("addTodoItem_rev1", revision.toString())
+            Log.d("addTodoItem_rev2", raw.body()?.revision.toString())
+            val response = raw.body()
             Log.d("addTodoItem", response.toString())
             if (response != null) {
                 if (response.status == "ok") {
@@ -111,9 +121,10 @@ class ApiRepositoryImpl(private val context: Context) : ApiRepository{
 
     override suspend fun deleteTodoItem(revision: Int, id: UUID): TodoItem? {
         return try {
-            val response = service.deleteTodoItem(revision, id).body()
-            Log.d("deleteTodoItem", service.deleteTodoItem(revision, id).raw().toString())
-
+            val raw = service.deleteTodoItem(revision, id)
+            Log.d("deleteTodoItem", "rev1: $revision")
+            Log.d("deleteTodoItem", "raw: ${raw.raw().toString()}")
+            val response = raw.body()
             if (response != null) {
                 if (response.status == "ok") {
                     context.setRevision(response.revision)

@@ -32,4 +32,7 @@ class TodoListRepositoryImpl(application: Application) : TodoListRepository {
     override suspend fun deleteTodoItem(id: String) =
         todoItemDao.deleteTodoItem(id)
 
+    override suspend fun deleteTodoList() =
+        todoItemDao.deleteTodoList()
+
 }

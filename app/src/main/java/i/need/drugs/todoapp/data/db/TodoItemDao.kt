@@ -25,6 +25,6 @@ interface TodoItemDao {
     suspend  fun deleteTodoItem(todoItemId: String)
 
     @Query("DELETE FROM todo_items")
-    fun clearTodoList()
+    fun deleteTodoList()
 
 }

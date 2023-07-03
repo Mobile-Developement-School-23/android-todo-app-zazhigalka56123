@@ -14,4 +14,6 @@ interface TodoListRepository {
 
     suspend fun deleteTodoItem(id: String)
 
+    suspend fun deleteTodoList()
+
 }

@@ -1,6 +1,7 @@
 package i.need.drugs.todoapp.presentation
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,13 +51,15 @@ class MainFragment : Fragment() {
             todoListAdapter.submitList(it)
         }
 
-        viewModel.downloadTodoList()
 
         if (requireContext().getNeedUpdate()){
-            requireContext().setNeedUpdate(false)
+            Log.d("updateS", "true")
             viewModel.todoList.value?.let {
-                viewModel.updateTodoList(requireContext().getRevision(), it)
+                viewModel.updateTodoList(requireActivity(), requireContext().getRevision(), it)
+                requireContext().setNeedUpdate(false)
             }
+        }else{
+            viewModel.downloadTodoList(requireActivity())
         }
 
         countDone.observe(viewLifecycleOwner) {
@@ -75,6 +78,21 @@ class MainFragment : Fragment() {
             )
         }
 
+        binding.refresh.setOnRefreshListener {
+            if (requireActivity().getNeedUpdate()){
+                Log.d("updateR", "true")
+                viewModel.todoList.value?.let {
+                    Log.d("updateV", it.toString())
+                    viewModel.updateTodoList(requireActivity(), requireActivity().getRevision(), it)
+                    requireActivity().setNeedUpdate(false)
+                }
+
+            }else{
+                viewModel.downloadTodoList(requireActivity())
+            }
+            binding.refresh.isRefreshing = false
+        }
+
         setupRecyclerView()
 
         return binding.root
@@ -88,11 +106,11 @@ class MainFragment : Fragment() {
 
             setListener(object :  SwipeLeftRightCallback.Listener {
                 override fun onSwipedRight(position: Int) {
-                    viewModel.changeDoneState(requireContext().getRevision(), todoListAdapter.currentList[position])
+                    viewModel.changeDoneState(requireActivity(), requireContext().getRevision(), todoListAdapter.currentList[position])
                 }
 
                 override fun onSwipedLeft(position: Int) {
-                    viewModel.deleteTodoItem(requireContext().getRevision(), todoListAdapter.currentList[position].id)
+                    viewModel.deleteTodoItem(requireActivity(), requireContext().getRevision(), todoListAdapter.currentList[position].id)
                 }
             })
 
@@ -103,7 +121,7 @@ class MainFragment : Fragment() {
         }
 
         todoListAdapter.onTodoItemEditedListener = {
-            viewModel.changeDoneState(requireContext().getRevision(), it)
+            viewModel.changeDoneState(requireActivity(), requireContext().getRevision(), it)
         }
     }
 }
