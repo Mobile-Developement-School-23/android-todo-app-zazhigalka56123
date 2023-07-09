@@ -40,7 +40,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun downloadTodoList(activity: Activity){
         viewModelScope.launch(Dispatchers.IO) {
             val request = apiDownloadTodoListUseCase.downloadTodoList()
-            Log.d("downloadTodoList", request.toString())
             if(request == null) {
                 activity.snackBar("Не удалось обновить данные")
                 activity.setNeedUpdate(true)

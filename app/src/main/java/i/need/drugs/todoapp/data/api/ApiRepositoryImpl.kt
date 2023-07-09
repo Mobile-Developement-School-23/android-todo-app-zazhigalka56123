@@ -31,9 +31,7 @@ class ApiRepositoryImpl(private val context: Context) : ApiRepository{
     override suspend fun updateTodoList(revision: Int, body: List<TodoItem>): List<TodoItem>? {
         try {
             val raw = service.updateTodoList(revision, mapper.mapListEntityToListRequestDto(body))
-            Log.d("updateTodoListraw", raw.toString())
-            Log.d("updateTodoListrev1", revision.toString())
-            Log.d("updateTodoListrev2", raw.body()?.revision.toString())
+
             val response = raw.body()
 
             return if (response != null){
@@ -48,7 +46,6 @@ class ApiRepositoryImpl(private val context: Context) : ApiRepository{
             }
 
         }catch (e: Exception){
-            Log.d("update_err", e.message.toString())
             return null
         }
     }

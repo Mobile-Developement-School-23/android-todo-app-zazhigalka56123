@@ -39,21 +39,20 @@ class MainFragment : Fragment() {
 
         viewModel = ViewModelProvider(this) [MainViewModel::class.java]
 
-        viewModel.todoList.observe(viewLifecycleOwner) { it ->
+        viewModel.todoList.observe(viewLifecycleOwner) { todoList ->
             var count = 0
 
-            it.forEach {
-                 if (it.isCompleted)
+            todoList.forEach { todoItem ->
+                 if (todoItem.isCompleted)
                      count += 1
             }
 
             countDone.value = count
-            todoListAdapter.submitList(it)
+            todoListAdapter.submitList(todoList)
         }
 
 
         if (requireContext().getNeedUpdate()){
-            Log.d("updateS", "true")
             viewModel.todoList.value?.let {
                 viewModel.updateTodoList(requireActivity(), requireContext().getRevision(), it)
                 requireContext().setNeedUpdate(false)
@@ -80,9 +79,7 @@ class MainFragment : Fragment() {
 
         binding.refresh.setOnRefreshListener {
             if (requireActivity().getNeedUpdate()){
-                Log.d("updateR", "true")
                 viewModel.todoList.value?.let {
-                    Log.d("updateV", it.toString())
                     viewModel.updateTodoList(requireActivity(), requireActivity().getRevision(), it)
                     requireActivity().setNeedUpdate(false)
                 }

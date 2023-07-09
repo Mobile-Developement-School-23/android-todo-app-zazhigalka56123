@@ -56,5 +56,4 @@ class DatabaseMapper {
             date
         }
     }
-
 }
