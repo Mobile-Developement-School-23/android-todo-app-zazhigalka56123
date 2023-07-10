@@ -34,7 +34,10 @@ class AddTodoFragment : Fragment() {
     private val c = Calendar.getInstance()
 
     private val component by lazy {
-        (requireActivity().application as TodoApp).component
+        (requireActivity().application as TodoApp)
+            .component
+            .activityComponentFactory()
+            .create()
     }
 
     override fun onAttach(context: Context) {
