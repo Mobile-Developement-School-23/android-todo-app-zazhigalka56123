@@ -5,11 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import i.need.drugs.todoapp.domain.db.TodoItem
 import i.need.drugs.todoapp.domain.db.TodoListRepository
+import javax.inject.Inject
 
-class TodoListRepositoryImpl(application: Application) : TodoListRepository {
-
-    private val todoItemDao = DatabaseApp.getInstance(application).todoItemDao()
-    private val mapper = DatabaseMapper()
+class TodoListRepositoryImpl @Inject constructor(
+    private val todoItemDao: TodoItemDao,
+    private val mapper: DatabaseMapper,
+    ) : TodoListRepository {
 
 
     override fun getTodoList(): LiveData<List<TodoItem>> =

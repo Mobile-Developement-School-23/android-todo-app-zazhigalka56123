@@ -1,5 +1,6 @@
 package i.need.drugs.todoapp.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.transition.MaterialSharedAxis
@@ -15,16 +17,30 @@ import com.tsuryo.swipeablerv.SwipeLeftRightCallback
 import i.need.drugs.todoapp.R
 import i.need.drugs.todoapp.databinding.FragmentMainBinding
 import i.need.drugs.todoapp.presentation.recyclerview.TodoListAdapter
+import javax.inject.Inject
 
 class MainFragment : Fragment() {
 
     private lateinit var binding: FragmentMainBinding
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var viewModel: MainViewModel
 
     private val todoListAdapter = TodoListAdapter()
 
     companion object{
         var countDone = MutableLiveData(0)
+    }
+
+    private val component by lazy {
+        (requireActivity().application as TodoApp).component
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
     }
 
     override fun onCreateView(
@@ -37,7 +53,7 @@ class MainFragment : Fragment() {
 
         binding = FragmentMainBinding.inflate(inflater, container, false)
 
-        viewModel = ViewModelProvider(this) [MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory) [MainViewModel::class.java]
 
         viewModel.todoList.observe(viewLifecycleOwner) { todoList ->
             var count = 0

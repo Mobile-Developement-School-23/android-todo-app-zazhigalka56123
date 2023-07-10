@@ -1,15 +1,19 @@
 package i.need.drugs.todoapp.data.api
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import i.need.drugs.todoapp.domain.api.ApiRepository
 import i.need.drugs.todoapp.domain.db.TodoItem
 import i.need.drugs.todoapp.presentation.setRevision
 import java.util.*
+import javax.inject.Inject
 
-class ApiRepositoryImpl(private val context: Context) : ApiRepository{
-    private val service = ApiBuilder().service()
-    private val mapper = ApiMapper()
+class ApiRepositoryImpl @Inject constructor(
+    private val context: Application,
+    private val service: ApiService,
+    private val mapper: ApiMapper
+    ) : ApiRepository{
 
     override suspend fun downloadTodoList(): List<TodoItem>? {
         try {
@@ -23,10 +27,10 @@ class ApiRepositoryImpl(private val context: Context) : ApiRepository{
                     null
                 }
             }
-            return null
         } catch (e: Exception) {
-            return null
+            Log.d("error", e.message.toString())
         }
+        return null
     }
     override suspend fun updateTodoList(revision: Int, body: List<TodoItem>): List<TodoItem>? {
         try {

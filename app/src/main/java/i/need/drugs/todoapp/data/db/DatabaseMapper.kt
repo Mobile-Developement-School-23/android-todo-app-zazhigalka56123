@@ -2,8 +2,9 @@ package i.need.drugs.todoapp.data.db
 
 import i.need.drugs.todoapp.domain.db.TodoItem
 import java.util.Date
+import javax.inject.Inject
 
-class DatabaseMapper {
+class DatabaseMapper @Inject constructor() {
 
     fun mapEntityToDbModel(todoItem: TodoItem) = TodoItemDbModel(
         id = todoItem.id,

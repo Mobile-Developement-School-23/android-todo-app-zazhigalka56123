@@ -1,37 +1,31 @@
 package i.need.drugs.todoapp.presentation
 
 import android.app.Activity
-import android.app.Application
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.*
-import i.need.drugs.todoapp.data.api.ApiRepositoryImpl
-import i.need.drugs.todoapp.data.db.TodoListRepositoryImpl
 import i.need.drugs.todoapp.domain.api.useCases.*
 import i.need.drugs.todoapp.domain.db.TodoItem
 import i.need.drugs.todoapp.domain.db.useCases.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
+import javax.inject.Inject
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel @Inject constructor(
+    private val getTodoListUseCase: GetTodoListUseCase,
+    private val getTodoItemUseCase: GetTodoItemUseCase,
+    private val editTodoItemUseCase: EditTodoItemUseCase,
+    private val addTodoItemUseCase: AddTodoItemUseCase,
+    private val deleteTodoItemUseCase: DeleteTodoItemUseCase,
+    private val deleteTodoListUseCase: DeleteTodoListUseCase,
+    private val apiLoadTodoItemUseCase: ApiLoadTodoItemUseCase,
+    private val apiDownloadTodoListUseCase: ApiDownloadTodoListUseCase,
+    private val apiEditTodoItemUseCase: ApiEditTodoItemUseCase,
+    private val apiDeleteTodoItemUseCase: ApiDeleteTodoItemUseCase,
+    private val apiUpdateTodoListUseCase: ApiUpdateTodoListUseCase
+) : ViewModel() {
 
-    private val repository = TodoListRepositoryImpl(application)
-    private val apiRepository = ApiRepositoryImpl(application)
 
-    private val getTodoListUseCase = GetTodoListUseCase(repository)
-    private val getTodoItemUseCase = GetTodoItemUseCase(repository)
-    private val editTodoItemUseCase = EditTodoItemUseCase(repository)
-    private val addTodoItemUseCase = AddTodoItemUseCase(repository)
-    private val deleteTodoItemUseCase = DeleteTodoItemUseCase(repository)
-    private val deleteTodoListUseCase = DeleteTodoListUseCase(repository)
-
-    private val apiLoadTodoItemUseCase = ApiLoadTodoItemUseCase(apiRepository)
-    private val apiDownloadTodoListUseCase = ApiDownloadTodoListUseCase(apiRepository)
-    private val apiEditTodoItemUseCase = ApiEditTodoItemUseCase(apiRepository)
-    private val apiDeleteTodoItemUseCase = ApiDeleteTodoItemUseCase(apiRepository)
-    private val apiUpdateTodoListUseCase = ApiUpdateTodoListUseCase(apiRepository)
 
     var todoList = getTodoListUseCase.getTodoList()
     var todoItem = MutableLiveData<TodoItem>()

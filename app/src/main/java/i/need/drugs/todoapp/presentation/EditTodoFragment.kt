@@ -1,6 +1,7 @@
 package i.need.drugs.todoapp.presentation
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,16 +22,30 @@ import i.need.drugs.todoapp.databinding.FragmentTodoBinding
 import i.need.drugs.todoapp.domain.db.TodoItem
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
 class EditTodoFragment : Fragment() {
 
     private lateinit var binding: FragmentTodoBinding
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var viewModel: MainViewModel
     private val todoId by lazy { navArgs<EditTodoFragmentArgs>().value.todoId }
     private val c = Calendar.getInstance()
     private var priorityMenu: PopupMenu? = null
 
     private lateinit var todoItem: TodoItem
+
+    private val component by lazy {
+        (requireActivity().application as TodoApp).component
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,7 +56,7 @@ class EditTodoFragment : Fragment() {
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
 
         binding = FragmentTodoBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this) [MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory) [MainViewModel::class.java]
 
         viewModel.getTodoItem(todoId)
         viewModel.todoItem.observeForever {

@@ -1,6 +1,7 @@
 package i.need.drugs.todoapp.presentation
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,17 +15,32 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 import i.need.drugs.todoapp.R
 import i.need.drugs.todoapp.databinding.FragmentTodoBinding
+import i.need.drugs.todoapp.di.DaggerAppComponent
 import i.need.drugs.todoapp.domain.db.TodoItem
 import java.util.*
+import javax.inject.Inject
 
 class AddTodoFragment : Fragment() {
 
     private lateinit var binding: FragmentTodoBinding
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
     private lateinit var viewModel : MainViewModel
     private lateinit var todoItem : TodoItem
 
     private var priorityMenu: PopupMenu? = null
     private val c = Calendar.getInstance()
+
+    private val component by lazy {
+        (requireActivity().application as TodoApp).component
+    }
+
+    override fun onAttach(context: Context) {
+        component.inject(this)
+        super.onAttach(context)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,7 +51,7 @@ class AddTodoFragment : Fragment() {
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
 
         binding = FragmentTodoBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity()) [MainViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity(), viewModelFactory) [MainViewModel::class.java]
 
         init()
         setupListeners()

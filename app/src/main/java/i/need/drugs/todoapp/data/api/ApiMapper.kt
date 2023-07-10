@@ -6,8 +6,9 @@ import i.need.drugs.todoapp.domain.api.model.TodoItemRequestDto
 import i.need.drugs.todoapp.domain.api.model.TodoListRequestDto
 import i.need.drugs.todoapp.domain.db.TodoItem
 import java.util.*
+import javax.inject.Inject
 
-class ApiMapper {
+class ApiMapper @Inject constructor() {
 
     fun mapDtoToEntity(todoItem: TodoItemDto) = TodoItem(
         id = todoItem.id.toString(),

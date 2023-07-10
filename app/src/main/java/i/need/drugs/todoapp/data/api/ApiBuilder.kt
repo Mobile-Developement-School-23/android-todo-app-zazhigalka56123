@@ -6,8 +6,9 @@ import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
+import javax.inject.Inject
 
-class ApiBuilder {
+class ApiBuilder @Inject constructor() {
     fun service(): ApiService {
         val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(Interceptor { chain ->
             val newRequest: Request = chain.request().newBuilder()

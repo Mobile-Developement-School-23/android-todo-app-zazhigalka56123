@@ -7,6 +7,7 @@ import i.need.drugs.todoapp.domain.api.model.TodoListResponseDto
 import retrofit2.Response
 import retrofit2.http.*
 import java.util.*
+import javax.inject.Inject
 
 interface ApiService {
     @GET("list")
