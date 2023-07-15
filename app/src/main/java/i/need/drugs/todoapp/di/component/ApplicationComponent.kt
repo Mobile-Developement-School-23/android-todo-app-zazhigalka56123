@@ -12,6 +12,7 @@ import i.need.drugs.todoapp.di.module.RepositoryModule
 import i.need.drugs.todoapp.di.module.ViewModelModule
 import i.need.drugs.todoapp.domain.notification.DeferredNotificationReceiver
 import i.need.drugs.todoapp.domain.notification.NotificationReceiver
+import i.need.drugs.todoapp.ui.MainActivity
 
 @ApplicationScope
 @Component(
@@ -30,6 +31,8 @@ interface ApplicationComponent {
     }
 
     fun mainActivityComponent(): MainActivityComponent
+
+    fun inject(activity: MainActivity)
 
     fun inject(app: TodoApp)
 

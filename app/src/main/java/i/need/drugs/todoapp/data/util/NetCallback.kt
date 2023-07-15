@@ -4,8 +4,9 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import i.need.drugs.todoapp.ui.MainViewModel
+import javax.inject.Inject
 
-class NetCallback(private val viewModel: MainViewModel) :
+class NetCallback(private val connectivityManager: ConnectivityManager) :
     ConnectivityManager.NetworkCallback() {
 
     var onNetworkAvailable: (() -> Unit)? = null
@@ -22,10 +23,10 @@ class NetCallback(private val viewModel: MainViewModel) :
 
     }
 
-    private fun isOnline(): Boolean {
+    fun isOnline(): Boolean {
         val capabilities =
-            viewModel.connectManager
-                .getNetworkCapabilities(viewModel.connectManager.activeNetwork)
+            connectivityManager
+                .getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {
             return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
                     capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||

@@ -1,6 +1,5 @@
 package i.need.drugs.todoapp.ui
 
-import android.net.ConnectivityManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import i.need.drugs.todoapp.di.MainActivityScope
@@ -22,9 +21,8 @@ class ViewModelFactory @Inject constructor(
     private val editTodoUseCase: EditTodoUseCase,
     private val deleteTodoUseCase: DeleteTodoUseCase,
     private val updateTodoListUseCase: UpdateTodoListUseCase,
-    private val addTodoUseCase: AddTodoUseCase,
-    val connectManager: ConnectivityManager
-) : ViewModelProvider.Factory {
+    private val addTodoUseCase: AddTodoUseCase
+    ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T =
         when(modelClass) {
             MainViewModel::class.java -> MainViewModel(
@@ -33,8 +31,7 @@ class ViewModelFactory @Inject constructor(
                 editTodoUseCase,
                 deleteTodoUseCase,
                 updateTodoListUseCase,
-                addTodoUseCase,
-                connectManager
+                addTodoUseCase
             ) as T
             TodoViewModel::class.java -> TodoViewModel(
                 getTodoUseCase,

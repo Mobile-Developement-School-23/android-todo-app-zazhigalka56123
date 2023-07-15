@@ -19,7 +19,9 @@ import com.google.android.material.transition.MaterialSharedAxis
 import i.need.drugs.todoapp.R
 import i.need.drugs.todoapp.TodoApp
 import i.need.drugs.todoapp.databinding.FragmentTodoBinding
+import i.need.drugs.todoapp.domain.model.ResponseState
 import i.need.drugs.todoapp.domain.model.Todo
+import i.need.drugs.todoapp.ui.MainActivity.Companion.isOnline
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -79,7 +81,12 @@ class EditTodoFragment : Fragment() {
                     setupListeners()
                 }
             }else {
-                //error not found
+                TodoApp.snackBar(
+                    binding.root,
+                    "Не удалось получить элемент",
+                    isOnline.value
+                )
+                findNavController().popBackStack()
             }
         }
 
@@ -157,7 +164,13 @@ class EditTodoFragment : Fragment() {
                     todo.changedDate = Calendar.getInstance().time
                     lifecycle.coroutineScope.launch(Dispatchers.IO) {
                         viewModel.editTodo(todo).collect {
-                            Log.d("editTodo", it.toString())
+                            if (it != ResponseState.State.STATE_OK){
+                                TodoApp.snackBar(
+                                    binding.root,
+                                    "Не удалось изменить элемент на сервере",
+                                    isOnline.value
+                                )
+                            }
                         }
                     }
                     findNavController().popBackStack()
@@ -258,7 +271,6 @@ class EditTodoFragment : Fragment() {
         super.onDestroy()
         _binding = null
     }
-
 
 
 }

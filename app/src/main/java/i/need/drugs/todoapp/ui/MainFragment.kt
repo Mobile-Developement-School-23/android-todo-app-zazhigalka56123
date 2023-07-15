@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +21,8 @@ import i.need.drugs.todoapp.TodoApp
 import i.need.drugs.todoapp.databinding.FragmentMainBinding
 import i.need.drugs.todoapp.domain.model.ResponseState.State.STATE_OK
 import i.need.drugs.todoapp.domain.model.Todo
+import i.need.drugs.todoapp.ui.MainActivity.Companion.isOnline
+import i.need.drugs.todoapp.ui.MainActivity.Companion.oldValue
 import i.need.drugs.todoapp.ui.recyclerview.TodoListAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,25 +63,49 @@ class MainFragment : Fragment() {
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
         exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
-//        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
 
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
         viewModel = ViewModelProvider(this, viewModelFactory) [MainViewModel::class.java]
 
-        viewModel.todoList.observeForever {
-            when(it.state){
-                STATE_OK -> if (it.data != null) todoListAdapter.submitList(it.data.sortedBy { it.createDate })
-                else -> {}
-            }
-        }
-
+        setupTodoListObserver()
+        setupOnlineStateObserver()
         setupRecyclerView()
         setupRefreshLayout()
         setupListeners()
 
         return binding.root
     }
+
+    private fun setupTodoListObserver() {
+        viewModel.todoList.observeForever {
+            when(it.state){
+                STATE_OK -> if (it.data != null) todoListAdapter.submitList(it.data.sortedBy { it.createDate })
+                else -> {
+                    TodoApp.snackBar(binding.rvMain, "Произошла ошибка при получении данных", isOnline.value)
+                }
+            }
+        }
+    }
+
+    private fun setupOnlineStateObserver() {
+        isOnline.observeForever {
+            if (it == true && it != oldValue) {
+                oldValue = it
+                TodoApp.snackBar(binding.rvMain, "Cоединенино с сервером", true, 0)
+                lifecycle.coroutineScope.launch {
+                    viewModel.todoList.value?.data?.let { list -> viewModel.updateTodoList(list) }
+                }
+            }
+            if (it == false && it != oldValue) {
+                oldValue = it
+                TodoApp.snackBar(binding.rvMain, "Cоединение с сервером потеряно", true)
+            }
+
+        }
+    }
+
+
 
     private fun setupRecyclerView(){
         with(binding.rvMain){
@@ -90,7 +117,9 @@ class MainFragment : Fragment() {
                     val todo = todoListAdapter.currentList[position]
                     lifecycle.coroutineScope.launch(Dispatchers.IO) {
                         viewModel.changeDoneState(todo).collect {
-                            Log.d("changeDoneState", it.toString())
+                            if (it != STATE_OK){
+                                TodoApp.snackBar(binding.rvMain, "Не удалось синхронизировать данные", isOnline.value)
+                            }
                         }
                     }
                 }
@@ -115,7 +144,9 @@ class MainFragment : Fragment() {
         todoListAdapter.onTodoEditedListener = {
             lifecycle.coroutineScope.launch(Dispatchers.IO) {
                 viewModel.changeDoneState(it).collect {
-                    Log.d("changeDoneState", it.toString())
+                    if (it != STATE_OK){
+                        TodoApp.snackBar(binding.rvMain, "Не удалось изменить элемент на сервере", isOnline.value)
+                    }
                 }
             }
         }
@@ -125,7 +156,11 @@ class MainFragment : Fragment() {
         binding.refresh.setOnRefreshListener {
             lifecycle.coroutineScope.launch(Dispatchers.IO) {
                 val list = viewModel.todoList.value?.data ?: emptyList()
-                viewModel.updateTodoList(list)
+                viewModel.updateTodoList(list).collect {
+                    if (it != STATE_OK){
+                        TodoApp.snackBar(binding.rvMain, "Не удалось синхронизировать данные c cервером", true)
+                    }
+                }
             }
             binding.refresh.isRefreshing = false
         }
@@ -150,10 +185,14 @@ class MainFragment : Fragment() {
             )
         }
     }
-    private fun makeUndoSnackbar(view: View, todo: Todo){
+    fun makeUndoSnackbar(view: View, todo: Todo){
         Snackbar.make(view, todo.msg, 5000).setAction("Отменить") {
             lifecycle.coroutineScope.launch(Dispatchers.IO) {
-                viewModel.addTodo(todo).collect {}
+                viewModel.addTodo(todo).collect {
+                    if (it != STATE_OK){
+                        TodoApp.snackBar(view, "Не удалось отменить удаление", isOnline.value)
+                    }
+                }
             }
         }
             .setBackgroundTint(view.context.getColor(R.color.red))
@@ -162,4 +201,5 @@ class MainFragment : Fragment() {
             .setActionTextColor(view.context.getColor(R.color.label_primary))
             .show()
     }
+
 }
