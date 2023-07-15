@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,7 +19,8 @@
             android:layout_marginTop="30dp"
             android:padding="10dp"
             app:tint="@color/label_primary"
-            android:src="@drawable/ic_close"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_close"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="@string/back" />
@@ -61,12 +62,11 @@
                 android:minHeight="108dp"
                 android:backgroundTint="@color/back_secondary"
                 android:gravity="top"
-                android:fontFamily="@font/roboto_regular"
                 android:hint="@string/msg_hint"
                 android:padding="16dp"
-                android:textColor="@color/label_primary"
                 android:textColorHint="@color/label_tertiary"
-                android:textSize="16sp" />
+                android:textColor="@color/label_primary"
+                android:textAppearance="@style/Text"/>
         </com.google.android.material.card.MaterialCardView>
 
 
@@ -76,10 +76,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="30dp"
-            android:fontFamily="@font/roboto_regular"
             android:text="@string/priority_title"
-            android:textColor="@color/label_primary"
-            android:textSize="16sp"
+            android:textAppearance="@style/Text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
@@ -89,12 +87,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="100dp"
-            android:fontFamily="@font/roboto_regular"
             android:paddingTop="5dp"
             android:paddingBottom="20dp"
             android:text="@string/low_priority"
-            android:textColor="@color/label_tertiary"
-            android:textSize="14sp"
+            android:textAppearance="@style/SubTitle"
             app:layout_constraintStart_toStartOf="@+id/tv_priority_title"
             app:layout_constraintTop_toBottomOf="@+id/tv_priority_title" />
 
@@ -119,10 +115,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="28dp"
-            android:fontFamily="@font/roboto_regular"
             android:text="@string/deadline_title"
-            android:textColor="@color/label_primary"
-            android:textSize="16sp"
+            android:textAppearance="@style/Text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -134,10 +128,8 @@
             android:layout_height="wrap_content"
             android:minWidth="100dp"
             android:visibility="invisible"
-            android:fontFamily="@font/roboto_regular"
             android:paddingTop="5dp"
-            android:textColor="@color/blue"
-            android:textSize="14sp"
+            android:textAppearance="@style/DateSubTitle"
             app:layout_constraintStart_toStartOf="@+id/tv_deadline_title"
             app:layout_constraintTop_toBottomOf="@+id/tv_deadline_title" />
 
@@ -195,9 +187,7 @@
                 android:layout_weight="1"
                 android:text="@string/delete"
                 android:layout_marginStart="20dp"
-                android:textColor="@color/red"
-                android:textSize="16sp"
-                android:fontFamily="@font/roboto_regular"/>
+                android:textAppearance="@style/DeleteTitle"/>
 
         </LinearLayout>
 

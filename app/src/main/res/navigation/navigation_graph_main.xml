@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/fragmentMain"
-        android:name="i.need.drugs.todoapp.presentation.MainFragment"
+        android:name="i.need.drugs.todoapp.ui.MainFragment"
         android:label="FragmentMain"
         tools:layout="@layout/fragment_main">
 
@@ -15,6 +15,9 @@
             android:id="@+id/action_add_todo"
             app:destination="@id/fragmentAddTodo"/>
 
+        <action
+            android:id="@+id/action_settings"
+            app:destination="@id/fragmentSettings"/>
         <action
             android:id="@+id/action_edit_todo"
             app:destination="@id/fragmentEditTodo">
@@ -26,19 +29,28 @@
 
     <fragment
         android:id="@+id/fragmentAddTodo"
-        android:name="i.need.drugs.todoapp.presentation.AddTodoFragment"
+        android:name="i.need.drugs.todoapp.ui.AddTodoFragment"
         android:label="FragmentAddTodo"
         tools:layout="@layout/fragment_todo"/>
 
     <fragment
         android:id="@+id/fragmentEditTodo"
-        android:name="i.need.drugs.todoapp.presentation.EditTodoFragment"
+        android:name="i.need.drugs.todoapp.ui.EditTodoFragment"
         android:label="FragmentEditTodo"
         tools:layout="@layout/fragment_todo">
         <argument
             android:name="todoId"
             app:argType="string" />
+
+        <deepLink
+            android:id="@+id/deepLinkEditTodo"
+            app:uri="app://todoapp/edit/{todoId}" />
     </fragment>
 
 
+    <fragment
+        android:id="@+id/fragmentSettings"
+        android:name="i.need.drugs.todoapp.ui.SettingsFragment"
+        android:label="FragmentSettings"
+        tools:layout="@layout/fragment_settings"/>
 </navigation>

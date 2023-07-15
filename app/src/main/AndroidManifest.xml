@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:allowBackup="true"
@@ -16,9 +18,9 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.ToDoApp"
         tools:targetApi="31"
-        android:name=".presentation.TodoApp">
+        android:name=".TodoApp">
         <activity
-            android:name=".presentation.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,6 +32,21 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <receiver
+            android:name=".domain.notification.NotificationReceiver"
+            android:enabled="true" />
+
+        <receiver
+            android:name=".domain.notification.DeferredNotificationReceiver"
+            android:enabled="true" />
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:enabled="false"
+            android:exported="false" />
+
     </application>
 
 </manifest>
