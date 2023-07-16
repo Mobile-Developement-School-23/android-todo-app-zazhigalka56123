@@ -51,7 +51,7 @@ fun AddAppBarElement(
             )
             TextButton(
                 onClick = {
-                    state(TodoState.AddTodo)
+                    state(TodoState.Add)
                   },
                 enabled = todo.msg.isNotBlank(),
                 colors = ButtonDefaults.textButtonColors(

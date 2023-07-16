@@ -11,16 +11,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.transition.MaterialSharedAxis
 import i.need.drugs.todoapp.TodoApp
-import i.need.drugs.todoapp.databinding.FragmentAddTodoBinding
+import i.need.drugs.todoapp.databinding.FragmentTodoBinding
 import i.need.drugs.todoapp.ui.compose.AddTodoScreen
 import i.need.drugs.todoapp.ui.compose.theme.theme
 import javax.inject.Inject
 
 class AddTodoFragment: Fragment(){
 
-    private var _binding: FragmentAddTodoBinding? = null
+    private var _binding: FragmentTodoBinding? = null
 
-    private val binding: FragmentAddTodoBinding
+    private val binding: FragmentTodoBinding
         get() = _binding!!
 
     @Inject
@@ -46,16 +46,17 @@ class AddTodoFragment: Fragment(){
         enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
 
-        _binding = FragmentAddTodoBinding.inflate(inflater, container, false)
+        _binding = FragmentTodoBinding.inflate(inflater, container, false)
 
         viewModel = ViewModelProvider(this, viewModelFactory)[TodoViewModel::class.java]
 
         viewModel.onNavigateBack = {findNavController().popBackStack()}
 
-        binding.composeAddTodoItem.setContent {
+        binding.compose.setContent {
             theme {
                 AddTodoScreen(
                     viewModel.todo.collectAsState().value,
+                    false,
                     viewModel::observeState
                 )
             }

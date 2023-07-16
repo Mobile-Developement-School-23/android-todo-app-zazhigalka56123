@@ -10,9 +10,9 @@ sealed class TodoState {
 
     data class ChangedPriority(val priority: Todo.Priority) : TodoState()
 
-    object AddTodo: TodoState()
+    object Add: TodoState()
 
-    object DeleteTodo : TodoState()
+    object Delete : TodoState()
 
     object Close: TodoState()
 

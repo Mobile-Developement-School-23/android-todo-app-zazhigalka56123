@@ -82,6 +82,8 @@ fun AddDeadlineElement(
             onCheckedChange = { checked ->
                 if (checked){
                     switchState = true
+                    todo.deadline = Calendar.getInstance().time
+                    state(TodoState.ChangedDeadline(todo.deadline?.time))
                 }else{
                     state(TodoState.ChangedDeadline(null))
                     switchState = false

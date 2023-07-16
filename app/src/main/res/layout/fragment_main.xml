@@ -48,6 +48,7 @@
                     android:layout_marginStart="60dp"
                     android:layout_marginTop="80dp"
                     android:text="@string/todo_done"
+                    android:visibility="gone"
                     android:textSize="16sp"
                     android:fontFamily="@font/roboto_regular"
                     android:textColor="@color/label_tertiary"

@@ -52,6 +52,11 @@ fun AddTextFieldElement(
                     text = stringResource(R.string.msg_hint),
                     color = colors.labelTertiary
                 )
+            else
+                Text(
+                    text = text,
+                    color = colors.labelPrimary
+                )
             textField.invoke()
         }
     }

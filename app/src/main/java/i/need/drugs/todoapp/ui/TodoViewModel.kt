@@ -1,5 +1,6 @@
 package i.need.drugs.todoapp.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import i.need.drugs.todoapp.domain.model.ResponseState
@@ -27,7 +28,7 @@ class TodoViewModel @Inject constructor(
     private val editTodoUseCase: EditTodoUseCase,
 
 ) : ViewModel() {
-    private var isNewItem: Boolean = true
+    var isNewItem: Boolean = true
     
     var onNavigateBack: ( () -> Unit)? = null
 
@@ -46,11 +47,11 @@ class TodoViewModel @Inject constructor(
 
     fun observeState(state: TodoState) {
         when(state) {
-            TodoState.AddTodo -> addTodo(todo.value)
+            TodoState.Add -> addTodo(todo.value)
 
             TodoState.Close -> onNavigateBack?.invoke()
 
-            TodoState.DeleteTodo -> deleteTodo(todo.value)
+            TodoState.Delete -> deleteTodo(todo.value)
 
             is TodoState.ChangedText -> _todo.update {
                 todo.value.copy(
@@ -70,32 +71,47 @@ class TodoViewModel @Inject constructor(
         }
     }
 
-    suspend fun getTodo(id: UUID): ResponseState<out Todo?> {
-        return getTodoUseCase(id)
+    fun getTodo(id: UUID) {
+        Log.d("dasdasda", "dsada")
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = getTodoUseCase(id)
+            Log.d("dasdasda", response.toString())
+            if (response.state == ResponseState.State.STATE_OK && response.data != null) {
+                    _todo.value = response.data
+            }else{
+                onNavigateBack?.invoke()
+            }
+        }
     }
 
     fun deleteTodo(item: Todo) {
-        if (!isNewItem) {
-            viewModelScope.launch(Dispatchers.IO) {
-                deleteTodoUseCase(item).collect {}
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteTodoUseCase(item).collect {}
         }
+        onNavigateBack?.invoke()
+
     }
 
     fun addTodo(item: Todo) {
         if (item.msg != "") {
-            viewModelScope.launch(Dispatchers.IO) {
-                addTodoUseCase(item).collect {
+            if (isNewItem) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    addTodoUseCase(item).collect {
+                    }
                 }
+                onNavigateBack?.invoke()
+            }else{
+                editTodo(item)
             }
-            onNavigateBack?.invoke()
         }
         
     }
 
-    fun editTodo(item: Todo) = flow {
-        editTodoUseCase(item).collect {
-            emit(it.state)
+    fun editTodo(item: Todo)  {
+        viewModelScope.launch(Dispatchers.IO) {
+            editTodoUseCase(item).collect {
+            }
         }
+        onNavigateBack?.invoke()
     }
 }

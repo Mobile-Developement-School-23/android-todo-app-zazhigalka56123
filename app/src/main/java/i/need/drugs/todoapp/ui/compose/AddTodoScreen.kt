@@ -12,6 +12,7 @@ import i.need.drugs.todoapp.domain.model.Todo
 import i.need.drugs.todoapp.ui.compose.elements.AddTextFieldElement
 import i.need.drugs.todoapp.ui.compose.elements.AddAppBarElement
 import i.need.drugs.todoapp.ui.compose.elements.AddDeadlineElement
+import i.need.drugs.todoapp.ui.compose.elements.AddDeleteElement
 import i.need.drugs.todoapp.ui.compose.elements.AddElementPriority
 import i.need.drugs.todoapp.ui.compose.elements.AddLineElement
 
@@ -24,6 +25,7 @@ import java.util.UUID
 @Composable
 fun AddTodoScreen (
     todo: Todo,
+    canDelete: Boolean,
     state: (TodoState) -> Unit
 ) {
     Scaffold(topBar = { AddAppBarElement(todo, state) }, containerColor = colors.backPrimary) {
@@ -38,6 +40,7 @@ fun AddTodoScreen (
                 AddLineElement()
                 AddDeadlineElement(todo, state)
                 AddLineElement()
+                if(canDelete) AddDeleteElement(state)
 
             }
         }
@@ -60,6 +63,6 @@ fun PreviewAddTodoItemScreen(
 
     )
     theme(darkTheme = darkTheme) {
-        AddTodoScreen(state, {})
+        AddTodoScreen(state, false, {})
     }
 }
