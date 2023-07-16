@@ -13,15 +13,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialSharedAxis
 import i.need.drugs.todoapp.R
 import i.need.drugs.todoapp.TodoApp
 import i.need.drugs.todoapp.databinding.FragmentTodoBinding
-import i.need.drugs.todoapp.domain.model.ResponseState
 import i.need.drugs.todoapp.domain.model.Todo
-import i.need.drugs.todoapp.ui.MainActivity.Companion.isOnline
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -29,7 +26,7 @@ import java.util.Date
 import java.util.UUID
 import javax.inject.Inject
 
-class EditTodoFragment : Fragment() {
+class AddTodoXmlFragment  : Fragment() {
 
     private var _binding: FragmentTodoBinding? = null
 
@@ -43,16 +40,14 @@ class EditTodoFragment : Fragment() {
 
     private lateinit var todo : Todo
 
-    private val todoId by lazy { UUID.fromString(navArgs<EditTodoFragmentArgs>().value.todoId) }
-    private val c = Calendar.getInstance()
     private var priorityMenu: PopupMenu? = null
+    private val c = Calendar.getInstance()
 
     private val component by lazy {
         (requireActivity().application as TodoApp)
             .component
             .mainActivityComponent()
     }
-
 
     override fun onAttach(context: Context) {
         component.inject(this)
@@ -68,73 +63,40 @@ class EditTodoFragment : Fragment() {
         returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
 
         _binding = FragmentTodoBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this, viewModelFactory) [TodoViewModel::class.java]
 
-        lifecycle.coroutineScope.launch(Dispatchers.IO) {
-            val response = viewModel.getTodo(todoId).data
+        viewModel = ViewModelProvider(this, viewModelFactory)[TodoViewModel::class.java]
 
-            if (response != null) {
-                todo = response
-                requireActivity().runOnUiThread {
-                    init()
-                    setupMenu()
-                    setupListeners()
-                }
-            }else {
-                TodoApp.snackBar(
-                    binding.root,
-                    "Не удалось получить элемент",
-                    isOnline.value
-                )
-                findNavController().popBackStack()
-            }
-        }
+        init()
+        setupListeners()
 
         return binding.root
     }
 
-
     private fun init(){
         with(binding){
-            tvMsg.setText(todo.msg)
-
-            when(todo.priority){
-                Todo.Priority.LOW -> {
-                    binding.tvPriority.setTextColor(requireContext().getColor(R.color.label_tertiary))
-                    binding.tvPriority.text = "Низкий"
-                }
-                Todo.Priority.URGENT -> {
-                    binding.tvPriority.setTextColor(requireContext().getColor(R.color.red))
-                    binding.tvPriority.text = "!! Высокий"
-                }
-                else -> {
-                    binding.tvPriority.setTextColor(requireContext().getColor(R.color.label_tertiary))
-                    binding.tvPriority.text = "Нет"
-                }
-            }
-
-            if (todo.deadline != null) {
-                switchDeadline.isChecked = true
-                tvDeadline.visibility = View.VISIBLE
-
-                setupDate(todo.deadline!!)
-            }else{
-                switchDeadline.isChecked = false
-                tvDeadline.visibility = View.INVISIBLE
-                setupDate(null)
-            }
-
+            todo = Todo(
+                id = UUID.randomUUID(),
+                msg = "",
+                priority = Todo.Priority.NORMAL,
+                deadline = null,
+                isCompleted = false,
+                createDate = Calendar.getInstance().time,
+                changedDate = null
+            )
+            setupMenu()
+            setupDate(c.time)
             ivDelete
                 .setColorFilter(
-                    ContextCompat.getColor(requireContext(), R.color.red),
+                    ContextCompat.getColor(requireContext(), R.color.label_disable),
                     android.graphics.PorterDuff.Mode.MULTIPLY
                 )
 
-            tvDelete.setTextColor(requireActivity().getColor(R.color.red))
+            tvDelete.setTextColor(requireActivity().getColor(R.color.label_disable))
         }
     }
-    private fun setupListeners() {
-        with(binding) {
+
+    private fun setupListeners(){
+        with(binding){
             ivBack.setOnClickListener {
                 findNavController().popBackStack()
             }
@@ -161,17 +123,10 @@ class EditTodoFragment : Fragment() {
                 todo.msg = tvMsg.text.toString()
 
                 if (todo.msg.isNotBlank()) {
-                    todo.changedDate = Calendar.getInstance().time
                     lifecycle.coroutineScope.launch(Dispatchers.IO) {
-                        viewModel.editTodo(todo).collect {
-                            if (it != ResponseState.State.STATE_OK){
-                                TodoApp.snackBar(
-                                    binding.root,
-                                    "Не удалось изменить элемент на сервере",
-                                    isOnline.value
-                                )
-                            }
-                        }
+//                        viewModel.addTodo(todo).collect {
+//                            Log.d("addTodo", it.toString())
+//                        }
                     }
                     findNavController().popBackStack()
                 } else {
@@ -179,60 +134,14 @@ class EditTodoFragment : Fragment() {
                     val view = decorView.findViewById(android.R.id.content) ?: decorView.rootView
                     Snackbar
                         .make(view, "Заполните все поля", Snackbar.LENGTH_LONG)
+                        .setTextColor(requireActivity().getColor(R.color.label_primary))
                         .setBackgroundTint(requireActivity().getColor(R.color.back_secondary))
                         .show()
 
                 }
             }
-
-
-            llDelete.setOnClickListener {
-                lifecycle.coroutineScope.launch(Dispatchers.IO) {
-//                    viewModel.deleteTodo(todo).collect {
-//                        Log.d("deleteTodo", it.toString())
-//
-//                    }
-                }
-                findNavController().popBackStack()
-            }
-
-
-        }
-
-    }
-
-
-    private fun setupMenu(){
-        priorityMenu = PopupMenu(requireContext(), binding.tvPriority)
-
-        priorityMenu!!.menuInflater.inflate(R.menu.menu_priority, priorityMenu!!.menu)
-
-        priorityMenu!!.setOnMenuItemClickListener { item ->
-            menuListener(item.itemId)
-            return@setOnMenuItemClickListener true
         }
     }
-
-    private fun menuListener(itemId: Int){
-        when(itemId){
-            R.id.low -> {
-                binding.tvPriority.setTextColor(requireActivity().getColor(R.color.label_tertiary))
-                binding.tvPriority.text = "Низкий"
-                todo.priority = Todo.Priority.LOW
-            }
-            R.id.normal -> {
-                binding.tvPriority.setTextColor(requireActivity().getColor(R.color.label_tertiary))
-                binding.tvPriority.text = "Нет"
-                todo.priority = Todo.Priority.NORMAL
-            }
-            else -> {
-                binding.tvPriority.setTextColor(requireActivity().getColor(R.color.red))
-                binding.tvPriority.text = "!! Высокий"
-                todo.priority = Todo.Priority.URGENT
-            }
-        }
-    }
-
 
     private fun openDatePicker() {
         if (todo.deadline != null) {
@@ -255,6 +164,34 @@ class EditTodoFragment : Fragment() {
         datePickerDialog.show()
     }
 
+    private fun setupMenu(){
+        priorityMenu = PopupMenu(requireContext(), binding.tvPriority)
+
+        priorityMenu!!.menuInflater.inflate(R.menu.menu_priority, priorityMenu!!.menu)
+
+        // Хардкодить плохо, но я разбойник
+        priorityMenu!!.setOnMenuItemClickListener { item ->
+            when(item.itemId){
+                R.id.low -> {
+                    binding.tvPriority.setTextColor(requireActivity().getColor(R.color.label_tertiary))
+                    binding.tvPriority.text = "Низкий"
+                    todo.priority = Todo.Priority.LOW
+                }
+                R.id.normal -> {
+                    binding.tvPriority.setTextColor(requireActivity().getColor(R.color.label_tertiary))
+                    binding.tvPriority.text = "Нет"
+                    todo.priority = Todo.Priority.NORMAL
+                }
+                else -> {
+                    binding.tvPriority.setTextColor(requireActivity().getColor(R.color.red))
+                    binding.tvPriority.text = "!! Высокий"
+                    todo.priority = Todo.Priority.URGENT
+                }
+            }
+            return@setOnMenuItemClickListener true
+        }
+    }
+
     private fun setupDate(date: Date?) {
         val c = Calendar.getInstance()
         if (date != null)
@@ -266,11 +203,5 @@ class EditTodoFragment : Fragment() {
 
         binding.tvDeadline.text = getString(R.string.date, day, month, year)
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
-
 
 }

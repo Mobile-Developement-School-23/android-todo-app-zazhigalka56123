@@ -13,6 +13,8 @@ class Merger @Inject constructor() {
             val pair = checkInList(item1.id, l2)
             if (pair.first && pair.second != null){
                 list.add(mergeItems(item1, pair.second!!))
+            }else{
+                list.add(item1)
             }
         }
         l2.forEach { item2 ->

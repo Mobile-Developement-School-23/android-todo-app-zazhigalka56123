@@ -31,11 +31,11 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             downloadTodoListUseCase().collect { response ->
                 if (response.state == ResponseState.State.STATE_OK && response.data != null) {
-                    todoList.value?.data?.let { updateTodoList(it) }
-                    Log.d("rewrwe", isOnline.value.toString() + " -  true")
+                    todoList.value?.data?.let {
+                        updateTodoList(it).collect {}
+                    }
                     if (isOnline.value != true) isOnline.postValue(true)
                 }else{
-                    Log.d("rewrwe", isOnline.value.toString() + " -  false")
                     if (isOnline.value != false) isOnline.postValue(false)
                 }
             }

@@ -10,6 +10,9 @@
     <string name="msg_hint">Что надо сделать…</string>
     <string name="priority_title">Важность</string>
     <string name="low_priority">Нет</string>
+    <string name="normal_priority">Обычная</string>
+    <string name="urgent_priority">!! Высокая</string>
     <string name="deadline_title">Сделать до</string>
     <string name="delete">Удалить</string>
+    <string name="cancel">Отменить</string>
 </resources>

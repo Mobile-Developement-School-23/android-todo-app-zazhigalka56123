@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         DaggerApplicationComponent.factory().create(this).inject(this)
 
         val netCallback = NetCallback(connectivityManager)
-
         connectivityManager.registerDefaultNetworkCallback(netCallback)
         netCallback.onNetworkAvailable = {
             if (isOnline.value != true) {
